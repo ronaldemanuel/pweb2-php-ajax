@@ -30,10 +30,10 @@
 
       //Enquanto existir usuários no banco ele insere uma nova linha e exibe os dados
       while ($row = mysqli_fetch_array($result)) {
-        $id = $row['usuario_id'];
-        $nome = $row['nome'];
-        $email = $row['email'];
-        $senha = $row['senha'];
+        $id = $row['ID_USUARIO'];
+        $nome = $row['NOME'];
+        $email = $row['EMAIL'];
+        $senha = $row['SENHA'];
         echo "   
                         <tr>
                             <td>$id</td>
