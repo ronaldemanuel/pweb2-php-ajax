@@ -1,3 +1,19 @@
+<?php
+//precisamos chamar esta página para realizarmos as queries com o banco
+include 'conexao.php';
+// Select que traz todos os usuários cadastrados no banco de dados
+$select = "SELECT * FROM USUARIO";
+$result = mysqli_query($connect, $select); //resultado do select
+$users = array();
+//Enquanto existir usuários no banco ele insere uma nova linha e exibe os dados
+while ($row = mysqli_fetch_array($result)) {
+  $id = $row['ID_USUARIO'];
+  $nome = $row['NOME'];
+  $email = $row['EMAIL'];
+  array_push($users, array("nome" => $nome, "id" => $id, "email" => $email));
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -19,30 +35,18 @@
         <th>Id</th> <!-- <td> -> table data -->
         <th>Nome</th> <!-- <th> -> table header -->
         <th>Email</th>
-        <th>Senha</th>
+        <th></th>
       </tr>
-      <?php
-      //precisamos chamar esta página para realizarmos as queries com o banco
-      include 'conexao.php';
-      // Select que traz todos os usuários cadastrados no banco de dados
-      $select = "SELECT * FROM USUARIO";
-      $result = mysqli_query($connect, $select); //resultado do select
-
-      //Enquanto existir usuários no banco ele insere uma nova linha e exibe os dados
-      while ($row = mysqli_fetch_array($result)) {
-        $id = $row['ID_USUARIO'];
-        $nome = $row['NOME'];
-        $email = $row['EMAIL'];
-        $senha = $row['SENHA'];
-        echo "   
-                        <tr>
-                            <td>$id</td>
-                            <td>$nome</td>
-                            <td>$email</td>
-                            <td>$senha</td>
-                        </tr>";
-      }
-      ?>
+      <?php foreach ($users as $key => $value) : ?>
+        <tr id="usuarios-<?= $value["id"] ?>">
+          <td><?= $value["id"] ?></td>
+          <td><?= $value["nome"] ?></td>
+          <td><?= $value["email"] ?></td>
+          <td>
+            <button onclick="deleteUserById(<?= $value["id"] ?>)">deletar</button>
+          </td>
+        </tr>
+      <?php endforeach; ?>
     </table>
 
     <!-- Modal que é aberto ao clicar novo usuário-->
@@ -125,4 +129,19 @@
     });
 
   });
+
+  function deleteUserById(id) {
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      url: 'deletar.php',
+      async: true,
+      data: {
+        id: id
+      },
+      success: function(response) {
+        document.getElementById(`usuarios-${id}`).remove();
+      }
+    });
+  }
 </script>
